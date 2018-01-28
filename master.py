@@ -19,6 +19,31 @@ while True:
 cur = cnx.cursor()
 
 
+def add_measurements(t,loc_no,insects,ndvi,water,chlora,chlorb):
+    #data format for SQL datetime: YYYY-MM-DD hh:mm:ss
+    values = [t,loc_no,insects,ndvi,water,chlora,chlorb]
+    cur.callproc('add_measurements', values)
+    cnx.commit
+
+t = "2018-01-28 14:30:00"
+loc_no = 1
+insects = True
+ndvi = 2
+water = 3
+chlora = 4
+chlorb = 5
+
+add_measurements(t,loc_no,insects,ndvi,water,chlora,chlorb)
+
+stmt = 'SELECT * FROM measurements'
+cur.execute(stmt)
+cnx.fetchall()
+
+    
+    
+
+
+
 
             
                             

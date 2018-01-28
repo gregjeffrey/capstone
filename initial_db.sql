@@ -35,24 +35,10 @@ CREATE TABLE measurements
 );
 
 DELIMITER //
-CREATE PROCEDURE plant_data(IN plant VARCHAR(20))
+CREATE PROCEDURE add_measurements(IN t datetime, loc_no INT, insects BOOL, ndvi DOUBLE, water DOUBLE, chlora DOUBLE, chlorb DOUBLE)
 BEGIN
-	SELECT tstamp, location_no, ndvi_val
-    FROM measurements
-    JOIN locations ON locations.location_no = measurements.location_no
-    WHERE locations.plant_type = plant;
+	INSERT INTO measurements (tstamp, location_no, insects_present, ndvi_val, water_content, chlor_a, chlor_b) VALUES
+    (t, loc_no, insects, ndvi, water, chlora, chlorb);
 END//
 DELIMITER ;
-
-DELIMITER //
-CREATE PROCEDURE farm_data(IN fieldname VARCHAR(20))
-BEGIN
-	SELECT tstamp, location_no, ndvi_val
-    FROM measurements
-    JOIN locations ON locations.location_no = measurements.location_no
-    WHERE locations.field_name = fieldname;
-END//
-DELIMITER ;
-
-
 
