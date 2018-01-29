@@ -37,7 +37,12 @@ add_measurements(t,loc_no,insects,ndvi,water,chlora,chlorb)
 
 stmt = 'SELECT * FROM measurements'
 cur.execute(stmt)
-cur.fetchall()
+a = cur.fetchall()
+
+print(a)
+
+
+
 
     
     
