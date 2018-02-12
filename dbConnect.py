@@ -11,16 +11,20 @@
 
 import pymysql
 
-def connect(hostname, username, password, database, charset, cursorType):
-    db = pymysql.connect(host=hostname,    # your host, usually localhost
-                         user=username,         # your username
-                         password=password,  # your password
+hostname="162.241.217.12"
+username="nuinstig_goat"
+password="kzzgBq_o]uVF"
+database="nuinstig_goats"
+charset = "utf8mb4"
+cursorType = pymysql.cursors.DictCursor
+
+def connect():
+    return pymysql.connect(host=hostname,
+                         user=username,
+                         password=password,
                          db=database,
                          charset=charset,
                          cursorclass=cursorType)
 
     # you must create a Cursor object. It will let
     #  you execute all the queries you need
-    cur = db.cursor()
-
-    return cur
