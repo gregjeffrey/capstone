@@ -23,7 +23,7 @@ class gui:
         self.tabs = self.form_notebook()
         self.grid_db_data(self.tabs[0])
         self.draw_graph(self.tabs[1], "1")
-        self.draw_image("C:/Users/Matt/Documents/hl_plants_20171117.jpg", self.tabs[2])
+        self.draw_image("testImages/hl_plants_20171117.jpg", self.tabs[2])
 
 
     def form_notebook(self):
@@ -105,10 +105,11 @@ class gui:
         canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     def draw_image(self, location, tab):
-        pil_img = Image.open(location)
-        self.img = ImageTk.PhotoImage(pil_img)
-        l = tk.Label(tab, image=self.img)
-        l.grid(row=1, column=1)
+        if location is not None:
+            pil_img = Image.open(location)
+            self.img = ImageTk.PhotoImage(pil_img)
+            l = tk.Label(tab, image=self.img)
+            l.grid(row=1, column=1)
 
 root = tk.Tk()
 my_gui = gui(root)
