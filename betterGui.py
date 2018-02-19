@@ -24,11 +24,19 @@ class gui:
             "#E5EB02", "#EAC201", "#E99301", "#E76500", "#E63600", "#E50800"]
 
         self.imageLoc = None
-        self.graphLoc = None
-        self.imageLocationOptions = self.setImageLocationOptions()
+        self.imageLocationOptions = self.setLocations()
         self.imageMeasurementOptions = ["None"]
         self.imageLabel = None
         self.imagesFromMeasurements= {"None": None}
+        self.graphDataOptions = ["Health", "Insects"]
+        self.graphDataLocations = self.setLocations()[1:]
+        self.graphLoc = self.graphDataLocations[0]
+        self.graphType = self.graphDataOptions[0]
+        self.data = [[],[]]
+        self.graphCanvas = None
+        self.graph_toolbar = None
+        self.figure = None
+        self.ax = None
 
         self.tabs = self.form_notebook()
 
@@ -39,6 +47,17 @@ class gui:
         self.draw_graph()
         self.refTwo = tk.Button(self.tabs[1], text="Refresh", command=self.refreshTwo)
         self.refTwo.place(relx=.9, rely=.9)
+
+        self.graphDataMenu = ttk.Combobox(self.tabs[1], values=self.graphDataOptions, state="readonly")
+        self.graphDataMenu.current(0)
+        self.graphDataMenu.pack()
+
+        self.graphDataMenuLocation = ttk.Combobox(self.tabs[1], values=self.graphDataLocations, state="readonly")
+        self.graphDataMenuLocation.current(0)
+        self.graphDataMenuLocation.pack()
+
+        self.subTwo = tk.Button(self.tabs[1], text="Submit", command=self.update_graph)
+        self.subTwo.pack()
 
         self.draw_image()
         self.refThree = tk.Button(self.tabs[2], text="Refresh", command=self.refreshThree)
@@ -113,34 +132,42 @@ class gui:
                     b.place(relx=relationx, rely=relationy, anchor="c")
 
     def get_measurements(self):
-        if self.graphLoc is None:
-            return None
-        self.cursor.execute('call get_ndvi_over_time(' + str(self.graphLoc) + ')')
+        self.cursor.execute('call get_graph_data(' + str(self.graphLoc) + ')')
         info = self.cursor.fetchall()
         times = []
         vals = []
         for measurement in info:
             t = measurement['tstamp']
             times.append(t)
-            vals.append(measurement['ndvi_val'])
+            if self.graphType == "Health":
+                vals.append(measurement['ndvi_val'])
+            else:
+                vals.append(measurement['insects_present'])
         return [times, vals]
 
     def draw_graph(self):
-        f = Figure(figsize=(5,5), dpi=100)
-        a = f.add_subplot(111)
-        data = self.get_measurements()
-        if data is not None:
-            a.plot(data[0], data[1])
+        self.figure = Figure(figsize=(5,5), dpi=100)
+        self.ax = self.figure.add_subplot(111)
+        self.data = self.get_measurements()
+        self.ax.plot(self.data[0], self.data[1])
 
-        canvas = FigureCanvasTkAgg(f, self.tabs[1])
-        canvas.show()
-        canvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
+        self.graphCanvas = FigureCanvasTkAgg(self.figure, self.tabs[1])
+        self.graphCanvas.show()
+        self.graphCanvas.get_tk_widget().pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
-        toolbar = NavigationToolbar2TkAgg(canvas, self.tabs[1])
-        toolbar.update()
-        canvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.graph_toolbar = NavigationToolbar2TkAgg(self.graphCanvas, self.tabs[1])
+        self.graph_toolbar.update()
+        self.graphCanvas._tkcanvas.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-    def setImageLocationOptions(self):
+    def update_graph(self):
+        self.graphLoc = self.graphDataMenuLocation.get()
+        self.graphType = self.graphDataMenu.get()
+        self.data = self.get_measurements()
+        self.ax.clear()
+        self.ax.plot(self.data[0], self.data[1])
+        self.graphCanvas.draw()
+
+    def setLocations(self):
         ops = ["None"]
         self.cursor.execute("call get_locations()")
         for loc in self.cursor.fetchall():
@@ -201,9 +228,7 @@ class gui:
         return 1
 
     def refreshTwo(self):
-        self.tabs[1].grid_forget()
-        self.draw_graph()
-        return 1
+        self.update_graph()
 
     def refreshThree(self):
         self.tabs[2].grid_forget()
