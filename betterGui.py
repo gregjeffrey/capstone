@@ -28,6 +28,7 @@ class gui:
         self.imageLocationOptions = self.setImageLocationOptions()
         self.imageMeasurementOptions = ["None"]
         self.imageLabel = None
+        self.imagesFromMeasurements= {"None": None}
 
         self.tabs = self.form_notebook()
 
@@ -148,10 +149,13 @@ class gui:
 
     def setImageMeasurementOptions(self):
         ops = ["None"]
-        self.cursor.execute("call get_images(" + str(self.imageLocationOptionMenu.get()) + ")")
-        for loc in self.cursor.fetchall():
-            ops.append(loc["tstamp"].strftime("%Y-%m-%d %H:%M:%S"))
-        return ops
+        images = {"None": None}
+        if not(str(self.imageLocationOptionMenu.get())) == "None":
+            self.cursor.execute("call get_images(" + str(self.imageLocationOptionMenu.get()) + ")")
+            for loc in self.cursor.fetchall():
+                ops.append(loc["tstamp"].strftime("%Y-%m-%d %H:%M:%S"))
+                images[ops[-1]] = loc["image"]
+        return ops, images
 
     def draw_image(self):
         if self.imageLoc is not None:
@@ -164,7 +168,7 @@ class gui:
 
     def resetImageLocationOptions(self):
         self.imageLoc = self.getImageLoc()
-        self.imageMeasurementOptions = self.setImageMeasurementOptions()
+        self.imageMeasurementOptions, self.imagesFromMeasurements = self.setImageMeasurementOptions()
         self.imageMeasurementOptionMenu.config(values=self.imageMeasurementOptions)
         self.imageMeasurementOptionMenu.current(0)
         if len(self.imageMeasurementOptions) > 1:
@@ -176,7 +180,7 @@ class gui:
         self.refreshThree()
 
     def resetImageMeasurementOptions(self):
-        self.imageLoc = self.getImageLoc()
+        self.imageLoc = self.getImageLocFromMeasurement()
         self.refreshThree()
 
     def getImageLoc(self):
@@ -185,6 +189,10 @@ class gui:
             self.cursor.execute("call get_last_saved_pic(" + str(locNo) + ")")
             return self.cursor.fetchall()[0]["last_pic_saved"]
         return None
+
+    def getImageLocFromMeasurement(self):
+        tstamp = self.imageMeasurementOptionMenu.get()
+        return self.imagesFromMeasurements[tstamp]
 
 
     def refreshOne(self):
