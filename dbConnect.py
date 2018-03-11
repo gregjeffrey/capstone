@@ -48,18 +48,4 @@ def add_measurement(cursor, values):
         unhealthy_leaf_count) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
     cursor.execute(statement, tuple(values))
 
-cursor = connect().cursor()
-t = "2018-01-28 15:30:00"
-loc_no = 1
-insects = 1
-ndvi = 3.0
-ir = 5.0
-healthy = 5
-unhealthy = 4
-image = None
-values = [t,loc_no,insects,image,ndvi,ir,healthy,unhealthy]
-add_measurement(cursor, values)
-cursor.execute(select("measurements"))
-info = cursor.fetchall()
-print(info)
 
