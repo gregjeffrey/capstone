@@ -53,7 +53,7 @@ def recv_img(port,img_no):
 	imgfile = open(filename,'w')
 	imgfile.write(img)
 	imgfile.close()
-	return imgfile
+	return filename
 
 			
 def send_trigger(port):
@@ -71,13 +71,12 @@ def send_averages(port):
 try:
 	port = Serial(port='/dev/ttyACM0',baudrate=115200,timeout=5)
 	port.inWaiting()
-except e:
-	print e
+except:
 	port = Serial(port='/dev/ttyACM1',baudrate=115200,timeout=5)	
 
 	
 def mainloop(num):
-	prt.flushInput()
+	port.flushInput()
 	send_trigger(port)
 	send_averages(port)
 	data = recv_msg(port)
