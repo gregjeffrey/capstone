@@ -28,17 +28,14 @@ def send_msg(fmtstr,msg,port):
 		return 1
 	except:
 		return -1
-	
 def recv_msg(port):
 	#Best way to read a line from the USB_VCP
-	
 	def getln():
 		while(1):
 			if port.any():
 				msg = port.readline()
 				break
-		return msg #Returns raw bytes message
-		
+		return msg #Returns raw bytes message	
 	try:
 		stg1 = getln()
 		fmtstr_size = ustruct.unpack('@3s',stg1)[0] # Receive stage 1- the size of the format string
@@ -54,12 +51,9 @@ def recv_msg(port):
 		stg3 = getln()
 		data = ustruct.unpack(fmtstr,stg3)
 				
-		return data
-		
+		return data	
 	except:
 		return -1
-
-	
 def send_img(img,port):
 	try:
 		jpg = img.compressed() # Creates jpg byte object
@@ -88,21 +82,9 @@ triggerstring = 'Go'
 
 while(1):
 	if brd.isconnected(): # Listen for the command/trigger
-		
-		#Does a few flashes if the USB is connected
-		for i in range(3):
-			led2.on()
-			time.sleep(500)
-			led2.off()
-		
-		
 		cmd = recv_msg(brd)[0].decode() # Looks for initialization command
 		if cmd == triggerstring:
-			led1.on()
-			
 			avg_data = recv_msg(brd) #Receive calibration data/moving averages from BB
-			if avg_data != -1:
-				led2.on()
 			
 			##############################################
 			### Camera People - Do all your shit here! ###
@@ -119,10 +101,8 @@ while(1):
 			#Send the image
 			success = send_msg(fmtstr,msg,brd)
 			imgsuccess = send_img(img,brd)
-			time.sleep(1000)
-			
-			led1.off()
-			led2.off()
+
+		
 		
 		
 

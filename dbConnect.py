@@ -9,7 +9,7 @@
 # Licence:     <your licence>
 #-------------------------------------------------------------------------------
 
-import pymysql
+import pymysql,ftplib,time
 
 hostname="162.241.217.12"
 username="nuinstig_goat"
@@ -48,4 +48,30 @@ def add_measurement(cursor, values):
         unhealthy_leaf_count) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"""
     cursor.execute(statement, tuple(values))
 
+def est_connections():
+	#Establish database connection
+	cnx = connect()
+	cur = cnx.cursor()
 
+	#Establish FTP connection & navigate to image dump directory
+	ftp = ftplib.FTP(host='nuinstigator.com',user='greg@nuinstigator.com',passwd='safezoneaccess')
+	return (cnx,cur,ftp)
+
+def add_vals(cnx,cur):
+	tstamp = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(time.time())))
+	location_no = 1
+	insects_present = True
+	image = 'testimg.jpg'
+	ndvi_val = 420
+	ir_val = 69
+	hlc = 4
+	ulc = 2
+
+	vals = (tstamp,location_no,insects_present,image,ndvi_val,ir_val,hlc,ulc)
+	add_measurement(cur,vals)
+	
+def add_img(filename,ftp):
+	f = open(filename,'rb')
+	cmd = 'STOR %s' % filename
+	ftp.storbinary(cmd,f)
+	f.close()

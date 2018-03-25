@@ -1,4 +1,4 @@
-import struct,time
+import struct,time,dbConnect
 from serial import Serial
 
 
@@ -74,6 +74,9 @@ try:
 except:
 	port = Serial(port='/dev/ttyACM1',baudrate=115200,timeout=5)	
 
+
+(cnx,cur,ftp) = dbConnect.est_connections()
+
 	
 def mainloop(num):
 	port.flushInput()
@@ -83,6 +86,12 @@ def mainloop(num):
 	print data
 	imgfile = recv_img(port,num)
 	print 'Image saved at %s' % imgfile
+	
+	dbConnect.add_vals(cnx,cur)
+	dbConnect.add_img(imgfile,ftp)
+	
+	print('Image uploaded!')
+	
 	return imgfile
 
 
