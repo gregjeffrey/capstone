@@ -2,7 +2,9 @@
     <head>
         <title>GOATS project</title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript" src="helpers.js"></script>
         <script type="text/javascript">
+			var finalData = [];
             function mapColor(health){
                 val = Math.floor(health / 10);
                 switch (val) {
@@ -31,10 +33,9 @@
                 }
             }
             function connect(){
-                var gridData;
+				var gridData;
                 var maxx = 0;
                 var maxy = 0;
-                var finalData = [];
                 $.ajax({
                     url: 'dbGridData.php',
                     async : false,
@@ -49,13 +50,14 @@
                     var plant = locationData[1];
                     var x_coord = locationData[2];
                     var y_coord = locationData[3];
+					var loc_no = locationData[4];
                     if (maxx < x_coord) {
                         maxx = x_coord;
                     }
                     if (maxy < y_coord) {
                         maxy = y_coord;
                     }
-                    var currentData = {x:x_coord, y:y_coord, health_change:health, plant_type:plant};
+                    var currentData = {x:x_coord, y:y_coord, health_change:health, plant_type:plant, location:loc_no};
                     finalData.push(currentData);
                 }
                 var tabl = document.getElementById("gridData");
@@ -69,8 +71,12 @@
                         trow.appendChild(tdat);
                         if (node.length != 0){
                             tdat.setAttribute("bgcolor", mapColor(node[0]["health_change"]));
+							var goodlink = document.createElement("A");
+							goodlink.setAttribute("href", "advancedData.html");
+							goodlink.setAttribute("onclick", "updateLocation("+ String(node[0]["location"]) +")");
                             var textnode = document.createTextNode(node[0]["plant_type"]);
-                            tdat.appendChild(textnode);
+                            tdat.appendChild(goodlink);
+							goodlink.append(textnode);
                         }
                     }
                 }

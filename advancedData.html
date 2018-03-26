@@ -1,7 +1,8 @@
 <html>
     <head>
         <title>GOATS ADV DATA</title>
-         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script type="text/javascript" src="helpers.js"></script>
         <script type="text/javascript">
             function connect(){
                 var graphData;
@@ -13,6 +14,11 @@
                     }
                 });
             }
+			function check(){
+				var loc = getLocation();
+				alert("html retrieved loc: " + loc);
+			}
+		</script>
     </head>
     <body>
         <table border="0" width="100%">
@@ -30,5 +36,6 @@
           </tr>
         </table>
         <p>THIS IS STILL A WORK IN PROGRESS</p>
+		<button onclick="check()">Test</button>
     </body>
 </html>

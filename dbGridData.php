@@ -20,7 +20,7 @@
         if ($result->num_rows > 0){
                 while ($row = $result->fetch_assoc()){
                     echo '[,' . $row["health_change"] . ", " . $row["plant_type"]
-                        . ", " . $row["x_coord"] . ", " . $row["y_coord"] . ",]-" ;
+                        . ", " . $row["x_coord"] . ", " . $row["y_coord"] . ", " . $row["location_no"] . ",]-" ;
                 }
         }
 ?>
