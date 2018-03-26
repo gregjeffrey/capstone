@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <title>GOATS ADV DATA</title>
+         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            function connect(){
+                var graphData;
+                $.ajax({
+                    url: 'dbGraphData.php',
+                    async : false,
+                    success: function(data) {
+                        graphData = data;
+                    }
+                });
+            }
+    </head>
+    <body>
+        <table border="0" width="100%">
+          <tr>
+            <td width="33%" style="vetical-align:center;"><div class="addthis_inline_share_toolbox"></div></td>
+            <td align="center" width="33%" style="vetical-align:center;"><h1>GOATS ADVANCED DATA</h1></td>
+            <td align="right" width="33%" style="vetical-align:center;">
+              <table border="1">
+                <tr>
+                  <td><a href="index.html">Home</a></td>
+                  <td><a href="advancedData.html">Advanced Data</a></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <p>THIS IS STILL A WORK IN PROGRESS</p>
+    </body>
+</html>

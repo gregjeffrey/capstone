@@ -1,0 +1,99 @@
+<html> 
+    <head>
+        <title>GOATS project</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            function mapColor(health){
+                val = Math.floor(health / 10);
+                switch (val) {
+                    case 0:
+                        return "#30FF0A";
+                    case 1:
+                        return "#44E50A";
+                    case 2:
+                        return "#59CC0B";
+                    case 3:
+                        return "#6DB20B";
+                    case 4:
+                        return "#82990C";
+                    case 5:
+                        return "#97800C";
+                    case 6:
+                        return "#AB660D ";
+                    case 7:
+                        return "#C04D0D";
+                    case 8:
+                        return "#D4330E";
+                    case 9:
+                        return "#E91A0E";
+                    case 10:
+                        return "#FE010F";
+                }
+            }
+            function connect(){
+                var gridData;
+                var maxx = 0;
+                var maxy = 0;
+                var finalData = [];
+                $.ajax({
+                    url: 'dbGridData.php',
+                    async : false,
+                    success: function(data) {
+                        gridData = data;
+                    }
+                });
+                var individualData = (gridData.split("-")).slice(0,-1);
+                for (i = 0; i < individualData.length; i++) {
+                    var locationData = (individualData[i].split(",")).slice(1,-1);
+                    var health = locationData[0];
+                    var plant = locationData[1];
+                    var x_coord = locationData[2];
+                    var y_coord = locationData[3];
+                    if (maxx < x_coord) {
+                        maxx = x_coord;
+                    }
+                    if (maxy < y_coord) {
+                        maxy = y_coord;
+                    }
+                    var currentData = {x:x_coord, y:y_coord, health_change:health, plant_type:plant};
+                    finalData.push(currentData);
+                }
+                var tabl = document.getElementById("gridData");
+                for (i = 0; i <= maxx; i++) {
+                    var trow = document.createElement("TR");
+                    tabl.appendChild(trow);
+                    for (j = 0; j <= maxy; j++) {
+                        var node = finalData.filter(function(obj){return obj["x"]==i}).filter(function(obj){return obj["y"]==j});
+                        var tdat = document.createElement("TD");
+                        tdat.setAttribute("align", "center");
+                        trow.appendChild(tdat);
+                        if (node.length != 0){
+                            tdat.setAttribute("bgcolor", mapColor(node[0]["health_change"]));
+                            var textnode = document.createTextNode(node[0]["plant_type"]);
+                            tdat.appendChild(textnode);
+                        }
+                    }
+                }
+            }
+        </script>
+    </head>
+    <body onload="connect()">
+        <table border="0" width="100%">
+          <tr>
+            <td width="33%" style="vetical-align:center;"><div class="addthis_inline_share_toolbox"></div></td>
+            <td align="center" width="33%" style="vetical-align:center;"><h1>GOATS PROJECT</h1></td>
+            <td align="right" width="33%" style="vetical-align:center;">
+              <table border="1">
+                <tr>
+                  <td><a href="index.html">Home</a></td>
+                  <td><a href="advancedData.html">Advanced Data</a></td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+        <p>Below is the gradient for the farm - red is bad and green is good.</p>
+        <table id="gridData" border="1"></table>
+        <p>We can even add stuff below too!</p>
+    </body>
+</html>
